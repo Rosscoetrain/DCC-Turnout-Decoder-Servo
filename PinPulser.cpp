@@ -61,6 +61,20 @@ void PinPulser::init(uint16_t servoMin_[], uint16_t servoMax_[], uint8_t servoTi
 
     this->pwm->setPWM(i, 0, this->servoPosition[i]);
     this->pwm->setPWM(i, 4096, 0);
+
+    Serial.print(i + 1);
+
+    if (this->servoPosition[i] == this->servoMin[i])
+     {
+      digitalWrite(outputs[currentServo], HIGH);
+      Serial.print(" : closed : ");
+      Serial.println(this->servoMin[i]);
+     }
+    else
+     {
+      digitalWrite(outputs[currentServo], LOW);
+      Serial.println(" : thrown");
+     }
    }
 
 
@@ -141,16 +155,19 @@ PP_State PinPulser::process(void)
          {
           pwm->setPWM(currentServo, 0, servoMin[currentServo]);
 #if DEBUG == 3
-          Serial.println("Close");
+          Serial.println("Close default");
 #endif
          }
         else
          {
           pwm->setPWM(currentServo, 0, servoMax[currentServo]);
 #if DEBUG == 3
-          Serial.println("Throw");
+          Serial.println("Throw default");
 #endif
+
          }
+
+        state = PP_OUTPUT_ON_DELAY;
         break;
 
       case 1:
@@ -180,9 +197,9 @@ PP_State PinPulser::process(void)
       moveCount = 1;
       moveMs = millis() + currentPause;
 
-      digitalWrite(outputs[currentServo], direction);           //    set the turnout LED to the direction 0 = closed 1 = thrown
+//      digitalWrite(outputs[currentServo], direction);           //    set the turnout LED to the direction 0 = closed 1 = thrown
 
-#ifdef DEBUG_MSG
+#if DEBUG == 2
       Serial.print(F(" millis : "));Serial.print(millis());Serial.print(F(" targetMs : "));Serial.println(targetMs);
 #endif
 
@@ -192,26 +209,48 @@ PP_State PinPulser::process(void)
     break;
 
   case PP_MOVING:
-    if (currentConfig != 0)
-     {
       now = millis();
       if ( now >= moveMs )
        {
+
+#if DEBUG == 4
+        Serial.print(moveCount);
+        Serial.print(" : ");
+        Serial.print(direction);
+        Serial.println(" : MOVING");
+#endif
+
         moveMs = millis() + currentPause;
         if (moveCount <= NUM_OF_STEPS)
          {
-          if (( direction ) && (servoMin[currentServo] < servoMax[currentServo]))
+#if DEBUG == 4
+          Serial.println("Moving 2");
+#endif
+//          if ( direction == 0 )
+          if ( !direction )
            {
             if (servoPosition[currentServo] != servoMin[currentServo])
              {
-              pwm->setPWM(currentServo, 0, servoMin[currentServo] + (currentStep * moveCount));
+              pwm->setPWM(currentServo, 0, servoMax[currentServo] - (currentStep * moveCount));
+
+#if DEBUG == 4
+              Serial.print(servoMax[currentServo] + (currentStep * moveCount));
+              Serial.println(" : moving");
+#endif
+
              }
            }
           else
            {
             if (servoPosition[currentServo] != servoMax[currentServo])
              {
-              pwm->setPWM(currentServo, 0, servoMax[currentServo] - (currentStep * moveCount));
+              pwm->setPWM(currentServo, 0, servoMin[currentServo] + (currentStep * moveCount));
+
+#if DEBUG == 4
+              Serial.print(servoMin[currentServo] + (currentStep * moveCount));
+              Serial.println(" : moving");
+#endif
+
              }
            }
           moveCount++;
@@ -221,11 +260,6 @@ PP_State PinPulser::process(void)
           state = PP_OUTPUT_ON_DELAY;
          }
        }
-     }
-    else
-     {
-      state = PP_OUTPUT_ON_DELAY;
-     }
     break;
 
   case PP_OUTPUT_ON_DELAY:
@@ -263,10 +297,12 @@ PP_State PinPulser::process(void)
 #endif
       pwm->setPWM(currentServo, 0, 4096);
 
+      digitalWrite(outputs[currentServo], direction);           //    set the turnout LED to the direction 0 = closed 1 = thrown
 
       memmove(pinQueue, pinQueue + 1, PIN_PULSER_MAX_PINS);
       state = PP_IDLE;
       updatePosition = 1;
+
     }
     break;
 

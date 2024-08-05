@@ -105,7 +105,7 @@ void doSerialCommand(String readString)
     Serial.println(F("Set decoder output closed position: <M output  mS / 10>"));
     Serial.println(F("Set decoder output thrown position: <N output mS / 10>"));
     Serial.println(F("Set decoder output move time: <O output S / 10>"));
-    Serial.println(F("Set decoder output configuration: <P output [0:1:2:4]>"));
+    Serial.println(F("Set decoder output configuration: <P output [0:1:2:3]>"));
     
     Serial.println(F("Where output is 0 - 15 as on the decoder pcb"));
 
@@ -547,14 +547,12 @@ void initPinPulser(void)
   Serial.print(F(" DCC Turnout Base Address: ")); Serial.println(BaseTurnoutAddress, DEC);
 
   // Step through all the Turnout LED pins setting them to OUTPUT and NOT Active State
-  for(uint8_t i = 0; i < NUM_TURNOUTS; i++)
-  {
-
+//  for(uint8_t i = 0; i < NUM_TURNOUTS; i++)
+//  {
 //    digitalWrite(outputs[i], !activeOutputState[i / 2]); // Set the Output Inactive before the direction so the 
-    digitalWrite(outputs[i], 0);                  // Set the Output Inactive before the direction so the 
-  	pinMode( outputs[i], OUTPUT );                // Pin doesn't momentarily pulse the wrong state
-
-	}
+//    digitalWrite(outputs[i], 0);                  // Set the Output Inactive before the direction so the 
+//  	pinMode( outputs[i], OUTPUT );                // Pin doesn't momentarily pulse the wrong state
+//	}
 
   // Init the PinPulser with the new settings 
 //  pinPulser.init(servoMin, servoMax, servoTime, outputs, pwm);
@@ -651,8 +649,14 @@ void notifyCVChange(uint16_t CV, uint8_t Value)
   Value = Value;  // Silence Compiler Warnings...
 
   if( (CV == CV_ACCESSORY_DECODER_ADDRESS_MSB) || (CV == CV_ACCESSORY_DECODER_ADDRESS_LSB) ||
-		 (CV == CV_ACCESSORY_DECODER_SERVO_MOVE_TIME) )
+		  (CV == CV_ACCESSORY_DECODER_SERVO_MOVE_TIME) ||
+      ( ( CV - 33 ) % 5 == 0 ) ||
+      ( ( CV - 34 ) % 5 == 0 ) ||
+      ( ( CV - 35 ) % 5 == 0 ) ||
+      ( ( CV - 36 ) % 5 == 0 ) )
+   {
 		initPinPulser();	                                 // Some CV we care about changed so re-init the PinPulser with the new CV settings
+   }
 }
 
 

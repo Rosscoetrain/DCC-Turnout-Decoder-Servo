@@ -119,6 +119,7 @@ void setup()
   for (uint8_t i=0; i < NUM_OF_LEDS; i++)
    {
      pinMode(outputs[i], OUTPUT);
+//     digitalWrite(outputs[i], LOW);
    }
 
 
