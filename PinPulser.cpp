@@ -52,7 +52,15 @@ void PinPulser::init(uint16_t servoMin_[], uint16_t servoMax_[], uint8_t servoTi
 
   for (int i = 0; i < NUM_OF_SERVOS; i++)
    {
+
+#if DEBUG == 2
+    Serial.print(i);
+    Serial.print(" : set ");
+    Serial.println(this->servoPosition[i]);
+#endif
+
     this->pwm->setPWM(i, 0, this->servoPosition[i]);
+    this->pwm->setPWM(i, 4096, 0);
    }
 
 
@@ -132,13 +140,16 @@ PP_State PinPulser::process(void)
         if ( !direction )
          {
           pwm->setPWM(currentServo, 0, servoMin[currentServo]);
-
+#if DEBUG == 3
           Serial.println("Close");
-
+#endif
          }
         else
          {
           pwm->setPWM(currentServo, 0, servoMax[currentServo]);
+#if DEBUG == 3
+          Serial.println("Throw");
+#endif
          }
         break;
 
@@ -225,12 +236,18 @@ PP_State PinPulser::process(void)
       if ( !direction )
        {
         servoPosition[currentServo] = servoMin[currentServo];
-
-        Serial.println("Closed");
+#if DEBUG == 3
+        Serial.print(currentServo);
+        Serial.println(" :  Closed");
+#endif
        }
       else
        {
         servoPosition[currentServo] = servoMax[currentServo];
+#if DEBUG == 3
+        Serial.print(currentServo);
+        Serial.println(" :  Thrown");
+#endif
        }
 
 #ifdef DEBUG_MSG
@@ -258,6 +275,24 @@ PP_State PinPulser::process(void)
 
   return state;
 }
+
+// set servos to start position
+
+void PinPulser::setServoStart()
+ {
+  for (uint8_t i=0; i < NUM_OF_SERVOS; i++)
+   {
+
+    Serial.print(i);
+    Serial.println(" : set ");
+
+    pwm->setPWM(i, 0, servoMax[currentServo]);
+
+   }
+
+ 
+ }
+
 
 
 void PinPulser::printArrays()

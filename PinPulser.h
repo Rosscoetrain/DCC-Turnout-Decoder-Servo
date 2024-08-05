@@ -79,6 +79,9 @@ class PinPulser
     PP_State process(void);
 
     void printArrays();
+
+    void setServoStart();
+
     uint16_t getServoMin(uint8_t pin);
     uint16_t getServoMax(uint8_t pin);
     uint8_t getServoTime(uint8_t pin);

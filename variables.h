@@ -32,10 +32,25 @@ struct CVPair
 
 
 /*
- * to use individual CV's for each address output requires two CV's
- * one for the pulse time
- * one for the output state
+ * to use individual CV's for each address output requires five CV's
  * 
+ * 1 servo minimum position
+ * 2 servo maximum position
+ * 3 time for servo to move
+ * 4 servo config see below
+ * 5 last servo position - this is so that on startup the servo is moved to it's last position
+ * 
+ * 4 servo config
+ * 
+ * // Config is as follows: (from DCC-EX IO_PCA9685.cpp)
+ * Bit 7:     0=Set PWM to 0% to power off servo motor when finished
+ *             1=Keep PWM pulses on (better when using PWM to drive an LED)
+ *  Bits 6-0:  0           Use specified duration (defaults to 0 deciseconds)
+ *             1 (Fast)    Move servo in 0.5 seconds
+ *             2 (Medium)  Move servo in 1.0 seconds
+ *             3 (Slow)    Move servo in 2.0 seconds
+ *             4 (Bounce)  Servo 'bounces' at extremes.  (not implemented)
+ *
  */
 
 

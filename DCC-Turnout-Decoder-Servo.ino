@@ -108,9 +108,19 @@ void setup()
 /*
   for (uint8_t i=0; i < NUM_OF_SERVOS; i++)
    {
-    pwm.setPWM(i, 0, 4096);
+    pwm.setPWM(i, 4096, 0);
    }
 */
+
+
+
+// set digital and analog pins defined in outputs to OUTPUT
+
+  for (uint8_t i=0; i < NUM_OF_LEDS; i++)
+   {
+     pinMode(outputs[i], OUTPUT);
+   }
+
 
 
 #ifdef FORCE_RESET_FACTORY_DEFAULT_CV
@@ -213,11 +223,10 @@ void loop()
     for (int i = 0; i < NUM_OF_SERVOS; i++)
      {
       Dcc.setCV(CV_USER_BASE_ADDRESS + 4 + (i * CV_PER_OUTPUT), pinPulser.getServoPosition(i) / 10);
-
+#ifdef DEBUG_MSG
       Serial.print("i: ");Serial.print(i);Serial.print(" pos: ");Serial.println(pinPulser.getServoPosition(i));
-
+#endif
      }
     pinPulser.setUpdatePosition();
    }
 }
-

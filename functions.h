@@ -105,7 +105,7 @@ void doSerialCommand(String readString)
     Serial.println(F("Set decoder output closed position: <M output  mS / 10>"));
     Serial.println(F("Set decoder output thrown position: <N output mS / 10>"));
     Serial.println(F("Set decoder output move time: <O output S / 10>"));
-    Serial.println(F("Set deocder output configuration: <P output [0:1:2:4]>"));
+    Serial.println(F("Set decoder output configuration: <P output [0:1:2:4]>"));
     
     Serial.println(F("Where output is 0 - 15 as on the decoder pcb"));
 

@@ -23,11 +23,9 @@
 #define DEFINES_H
 
 
-// this is the serial number for the board
+// this is the serial number for the board look on the back of the decoder board
 //
 #define SERIAL_NUMBER 999
-
-
 
 // Un-Comment the line below to force CVs to be written to the Factory Default values
 // defined in the FactoryDefaultCVs below on Start-Up
@@ -41,18 +39,21 @@
 // You can print every notifyDccAccTurnoutOutput call-back by un-commenting the line below
 //#define NOTIFY_TURNOUT_MSG
 
-// You can also print other Debug Messages uncommenting the line below
+// You can also print other Debug Messages uncommenting the line below this prints most debug messages
 //#define DEBUG_MSG
 
+// level of debug messages
+//#define DEBUG 0
+
 // Un-Comment the line below to include learning function
-//#define LEARNING
+#define LEARNING
 
 // Un-Comment the lines below to Enable DCC ACK for Service Mode Programming Read CV Capablilty 
 
 #ifdef ARDUINO_ARCH_ESP32
-#define ENABLE_DCC_ACK  23  // This is IO23 on ESP32 WROOM   
+//#define ENABLE_DCC_ACK  23  // This is IO23 on ESP32 WROOM   
 #else
-#define ENABLE_DCC_ACK  15  // This is A1 on the Iowa Scaled Engineering ARD-DCCSHIELD DCC Shield
+//#define ENABLE_DCC_ACK  15  // This is A1 on the Iowa Scaled Engineering ARD-DCCSHIELD DCC Shield
 #endif
 
 
@@ -128,6 +129,6 @@
 
 #define NUM_OF_STEPS 20      // number of steps to move servo in fast medium slow modes
 
+#define NUM_OF_LEDS 16       // number of leds that can be connected
+
 #endif
-
-
