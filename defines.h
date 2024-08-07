@@ -33,6 +33,9 @@
 // after uploading comment out the line and upload again for normal operation
 //#define FORCE_RESET_FACTORY_DEFAULT_CV
 
+// To enable serial communications via USB uncomment the following.
+#define ENABLE_SERIAL
+
 // You can print every DCC packet by un-commenting the line below
 //#define NOTIFY_DCC_MSG
 
@@ -42,7 +45,7 @@
 // You can also print other Debug Messages uncommenting the line below this prints most debug messages
 //#define DEBUG_MSG
 
-// level of debug messages
+// level of debug messages 0 - 3
 //#define DEBUG 0
 
 // Un-Comment the line below to include learning function
@@ -106,8 +109,8 @@
 // want these to be as small/large as possible without hitting the hard stop
 // for max range. You'll have to tweak them as necessary to match the servos you
 // have!
-#define SERVO_MIN  11        // This is the 'minimum' pulse length count (out of 4096) * 10
-#define SERVO_MAX  45        // This is the 'maximum' pulse length count (out of 4096) * 10
+#define SERVO_MIN  15        // This is the 'minimum' pulse length count (out of 4096) * 10
+#define SERVO_MAX  25        // This is the 'maximum' pulse length count (out of 4096) * 10
 #define SERVO_FREQ 50        // Analog servos run at ~50 Hz updates
 #define SERVO_CONFIG 0       // not in use yet.
 

@@ -47,11 +47,13 @@
 
 void setup()
 {
+#ifdef ENABLE_SERIAL
   Serial.begin(115200);
   uint8_t maxWaitLoops = 255;
   while(!Serial && maxWaitLoops--)
     delay(20);
-    
+#endif
+
   // Setup which External Interrupt, the Pin it's associated with that we're using and enable the Pull-Up
   // Many Arduino Cores now support the digitalPinToInterrupt() function that makes it easier to figure out the
   // Interrupt Number for the Arduino Pin number, which reduces confusion. 
@@ -67,8 +69,7 @@ void setup()
   // Call the main DCC Init function to enable the DCC Receiver
   Dcc.init( MAN_ID_DIY, DCC_DECODER_VERSION_NUM, FLAGS_OUTPUT_ADDRESS_MODE | FLAGS_DCC_ACCESSORY_DECODER, 0 );
 
-//#ifdef DEBUG_MSG
-//  Serial.print("\nNMRA DCC 8-Turnout Accessory Decoder. Ver: "); Serial.println(DCC_DECODER_VERSION_NUM,DEC);
+#ifdef ENABLE_SERIAL
   Serial.print("Rosscoe Train DCC 8 Turnout Servo Accessory Decoder. ");
 
   Serial.print(F("Version: "));
@@ -77,12 +78,9 @@ void setup()
   Serial.print(versionBuffer[1]);
   Serial.print(F("."));
   Serial.println(versionBuffer[2]);
-
-  
+ 
   Serial.println();
-
-
-//#endif
+#endif
 
 
   pwm.begin();
@@ -105,14 +103,6 @@ void setup()
   pwm.setOscillatorFrequency(27000000);
   pwm.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
 
-/*
-  for (uint8_t i=0; i < NUM_OF_SERVOS; i++)
-   {
-    pwm.setPWM(i, 4096, 0);
-   }
-*/
-
-
 
 // set digital and analog pins defined in outputs to OUTPUT
 
@@ -126,7 +116,9 @@ void setup()
 
 #ifdef FORCE_RESET_FACTORY_DEFAULT_CV
   notifyCVResetFactoryDefault(); 
+#ifdef ENABLE_SERIAL
   Serial.println("Resetting CVs to Factory Defaults");
+#endif
 #endif
 
   if( FactoryDefaultCVIndex == 0)	// Not forcing a reset CV Reset to Factory Defaults so initPinPulser
@@ -162,9 +154,11 @@ void loop()
     FactoryDefaultCVIndex--; // Decrement first as initially it is the size of the array
     uint16_t cv = FactoryDefaultCVs[FactoryDefaultCVIndex].CV;
     uint8_t val = FactoryDefaultCVs[FactoryDefaultCVIndex].Value;
+#ifdef ENABLE_SERIAL
 #ifdef DEBUG_MSG
     Serial.print("loop: Write Default CV: "); Serial.print(cv,DEC); Serial.print(" Value: "); Serial.println(val,DEC);
 #endif     
+#endif
     Dcc.setCV( cv, val );
     
     if( FactoryDefaultCVIndex == 0)	// Is this the last Default CV to set? if so re-initPinPulser
@@ -202,6 +196,7 @@ void loop()
 #endif
 
 
+#ifdef ENABLE_SERIAL
     // see if there are serial commands
   readString="";              //empty for next input
 
@@ -218,14 +213,17 @@ void loop()
    {
     doSerialCommand(readString);
    } 
+#endif
 
   if (pinPulser.getUpdatePosition())
    {
     for (int i = 0; i < NUM_OF_SERVOS; i++)
      {
       Dcc.setCV(CV_USER_BASE_ADDRESS + 4 + (i * CV_PER_OUTPUT), pinPulser.getServoPosition(i) / 10);
+#ifdef ENABLE_SERIAL
 #ifdef DEBUG_MSG
       Serial.print("i: ");Serial.print(i);Serial.print(" pos: ");Serial.println(pinPulser.getServoPosition(i));
+#endif
 #endif
      }
     pinPulser.setUpdatePosition();
