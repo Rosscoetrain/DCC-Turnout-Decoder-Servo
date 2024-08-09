@@ -44,7 +44,7 @@ class PinPulser
     PP_State      state = PP_IDLE;
     unsigned long targetMs = 0;
     unsigned long moveMs = 0;
-    uint8_t moveCount = 0;
+    uint16_t moveCount = 0;
 
     uint8_t       pinQueue[PIN_PULSER_MAX_PINS + 1];
     uint8_t       servoState[NUM_OF_SERVOS];
@@ -61,19 +61,30 @@ class PinPulser
     uint8_t currentServo;
     uint8_t direction;
 
-    uint16_t currentStep;                               // how far to move servo this step
     uint16_t currentPause;                              // how long to wait between servo steps
+
+    uint16_t numberOfSteps;                             // absolute difference between servoMin[n] and servoMax[n]
 
     uint8_t currentConfig;                              // current servo configuration
 
+#ifdef USE_SHIFT_REGISTER
+    uint16_t ledOutput;
+    void outputLeds(uint16_t);
+#else
     byte *outputs;
+#endif
 
     bool updatePosition;
 
   public:
 //    void init(uint16_t servoMin_[], uint16_t servoMax_[], uint8_t servoTime_[], uint8_t outputs_[], Adafruit_PWMServoDriver pwm_);
+#ifdef USE_SHIFT_REGISTER
+    void init(uint16_t servoMin_[], uint16_t servoMax_[], uint8_t servoTime_[], uint8_t servoConfig_[],
+              uint16_t servoPosition_[], Adafruit_PWMServoDriver *pwm_);
+#else
     void init(uint16_t servoMin_[], uint16_t servoMax_[], uint8_t servoTime_[], uint8_t servoConfig_[],
               uint16_t servoPosition_[], uint8_t outputs_[], Adafruit_PWMServoDriver *pwm_);
+#endif
 
     uint8_t addPin(uint8_t pin);
     PP_State process(void);

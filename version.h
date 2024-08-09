@@ -18,8 +18,10 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#define VERSION "0.0.1"
+#define VERSION "0.0.3"
 
+// 0.0.3  - make servo motion smooth
+// 0.0.2  - update to using 74HC595 shift registers for led control
 // 0.0.1  - Initial adaptation of NMRA example pulse-8 decoder to use PCA9685 connected servos
 
 #endif

@@ -45,18 +45,20 @@
 // You can also print other Debug Messages uncommenting the line below this prints most debug messages
 //#define DEBUG_MSG
 
-// level of debug messages 0 - 3
-//#define DEBUG 0
+// level of debug messages 0 - 4
+//#define DEBUG 3
 
 // Un-Comment the line below to include learning function
 #define LEARNING
 
-// Un-Comment the lines below to Enable DCC ACK for Service Mode Programming Read CV Capablilty 
+// Un-Comment the line below to use 74HC595 shift registers for the LEDS
+#define USE_SHIFT_REGISTER
 
+// Un-Comment the lines below to Enable DCC ACK for Service Mode Programming Read CV Capablilty 
 #ifdef ARDUINO_ARCH_ESP32
-//#define ENABLE_DCC_ACK  23  // This is IO23 on ESP32 WROOM   
+#define ENABLE_DCC_ACK  23  // This is IO23 on ESP32 WROOM   
 #else
-//#define ENABLE_DCC_ACK  15  // This is A1 on the Iowa Scaled Engineering ARD-DCCSHIELD DCC Shield
+#define ENABLE_DCC_ACK  15  // This is A1 on the Iowa Scaled Engineering ARD-DCCSHIELD DCC Shield
 #endif
 
 
@@ -124,14 +126,24 @@
 //             3 (Slow)    Move servo in 2.0 seconds
 //             4 (Bounce)  Servo 'bounces' at extremes.
 
-
+#define CURRENTSTEP 2        // servo movement step size
 
 #define SERVO_TIME 10        // the time it takes the servo to move in tenths of a second eg 10 = 1 second
 
 #define NUM_OF_SERVOS 16     // total number of servo channels
 
-#define NUM_OF_STEPS 20      // number of steps to move servo in fast medium slow modes
+//#define NUM_OF_STEPS 20      // number of steps to move servo in fast medium slow modes
 
 #define NUM_OF_LEDS 16       // number of leds that can be connected
 
-#endif
+
+/*
+ * shift register defines
+*/
+
+#define LATCH_PIN 5
+#define CLOCK_PIN 4
+#define DATA_PIN 6
+
+
+#endif   // defines.h

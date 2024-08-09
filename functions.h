@@ -93,6 +93,28 @@ void doSerialCommand(String readString)
     resetFunc();
    }
 
+
+#ifdef ENABLE_DCC_ACK
+
+  if (readString == "<H>")                       // set DCC_ACK on/off
+   {
+
+    digitalWrite(ENABLE_DCC_ACK, !ackOn);
+    ackOn = !ackOn;
+
+    if (ackOn)
+     {
+      Serial.println("ackOn");
+     }
+    else
+     {
+      Serial.println("ackOff");
+     }
+
+   }
+#endif
+
+
   if (readString == "<?>")
    {
     Serial.println(F("Help Text"));
@@ -556,7 +578,11 @@ void initPinPulser(void)
 
   // Init the PinPulser with the new settings 
 //  pinPulser.init(servoMin, servoMax, servoTime, outputs, pwm);
+#ifdef USE_SHIFT_REGISTER
+  pinPulser.init(servoMin, servoMax, servoTime, servoConfig, servoPosition, &pwm);
+#else
   pinPulser.init(servoMin, servoMax, servoTime, servoConfig, servoPosition, outputs, &pwm);
+#endif
 
   pinPulser.printArrays();
 

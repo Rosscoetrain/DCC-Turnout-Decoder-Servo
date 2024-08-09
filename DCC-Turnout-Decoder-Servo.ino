@@ -106,13 +106,21 @@ void setup()
 
 // set digital and analog pins defined in outputs to OUTPUT
 
+#ifdef USE_SHIFT_REGISTER
+  pinMode(LATCH_PIN, OUTPUT);
+  pinMode(CLOCK_PIN, OUTPUT);
+  pinMode(DATA_PIN, OUTPUT);
+#else
   for (uint8_t i=0; i < NUM_OF_LEDS; i++)
    {
      pinMode(outputs[i], OUTPUT);
 //     digitalWrite(outputs[i], LOW);
    }
+#endif
 
-
+#ifdef ENABLE_DCC_ACK
+  pinMode(ENABLE_DCC_ACK, OUTPUT);
+#endif
 
 #ifdef FORCE_RESET_FACTORY_DEFAULT_CV
   notifyCVResetFactoryDefault(); 

@@ -251,6 +251,7 @@ int learningMode = LOW;
 
 // buffer to hold serial commands
 String readString;
+bool ackOn = false;
 
 
 static uint16_t servoMin[NUM_TURNOUTS] = {};
