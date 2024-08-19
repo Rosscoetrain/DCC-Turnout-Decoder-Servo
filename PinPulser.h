@@ -30,15 +30,14 @@
 #define PIN_PULSER_MAX_PINS    16
 
 enum PP_State
-{  
+ {  
   PP_IDLE = 0,
   PP_OUTPUT_ON_DELAY,
   PP_MOVING,
-//  PP_CDU_RECHARGE_DELAY,
-};
+ };
 
 class PinPulser
-{
+ {
   private:
 //    uint16_t      cduRechargeMs;
     PP_State      state = PP_IDLE;
@@ -67,6 +66,7 @@ class PinPulser
 
     uint8_t currentConfig;                              // current servo configuration
 
+
 #ifdef USE_SHIFT_REGISTER
     uint16_t ledOutput;
     void outputLeds(uint16_t);
@@ -77,7 +77,7 @@ class PinPulser
     bool updatePosition;
 
   public:
-//    void init(uint16_t servoMin_[], uint16_t servoMax_[], uint8_t servoTime_[], uint8_t outputs_[], Adafruit_PWMServoDriver pwm_);
+
 #ifdef USE_SHIFT_REGISTER
     void init(uint16_t servoMin_[], uint16_t servoMax_[], uint8_t servoTime_[], uint8_t servoConfig_[],
               uint16_t servoPosition_[], Adafruit_PWMServoDriver *pwm_);
@@ -101,8 +101,7 @@ class PinPulser
     bool getUpdatePosition();
     void setUpdatePosition();
 
-};
-
+ };
 
 #endif
 

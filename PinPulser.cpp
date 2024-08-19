@@ -19,6 +19,10 @@
 
 #include "PinPulser.h"
 
+#ifdef USE_SHIFT_REGISTER
+#include "SPI.h"
+#endif
+
 // define empty pin slot value
 
 #define PIN_PULSER_SLOT_EMPTY 255
@@ -31,7 +35,7 @@ void PinPulser::init(uint16_t servoMin_[], uint16_t servoMax_[], uint8_t servoTi
                      uint16_t servoPosition_[], uint8_t outputs_[], Adafruit_PWMServoDriver *pwm_)
 #endif
 
-{
+ {
   this->servoMin = servoMin_;
   this->servoMax = servoMax_;
   this->servoTime = servoTime_;
@@ -49,7 +53,6 @@ void PinPulser::init(uint16_t servoMin_[], uint16_t servoMax_[], uint8_t servoTi
 
   for (uint8_t i = 0; i < NUM_OF_SERVOS; i++)
    {
-//     this->servoPosition[i] = this->servoMin[i];
      this->servoState[i] = 0;                      // 0 = not moving 1 = moving
    }
 
@@ -76,11 +79,7 @@ void PinPulser::init(uint16_t servoMin_[], uint16_t servoMax_[], uint8_t servoTi
     if (this->servoPosition[i] == this->servoMin[i])
      {
 #ifdef USE_SHIFT_REGISTER
-//    ledOutput = this->bit_clear(ledOutput, i);
     ledOutput &=  ~((uint16_t)1 << i);
-
-//    x &= ~(1<<i);
-
 
 #if DEBUG == 4
     Serial.print(" closed : ");
@@ -98,7 +97,6 @@ void PinPulser::init(uint16_t servoMin_[], uint16_t servoMax_[], uint8_t servoTi
     else
      {
 #ifdef USE_SHIFT_REGISTER
-//    ledOutput = this->bit_set(ledOutput, i);
     ledOutput |= ((uint16_t)1 << i);
 
 #if DEBUG == 4
@@ -124,10 +122,10 @@ void PinPulser::init(uint16_t servoMin_[], uint16_t servoMax_[], uint8_t servoTi
 #endif
 
   updatePosition = 0;
-}
+ }
 
 uint8_t PinPulser::addPin(uint8_t Pin)
-{
+ {
 #ifdef DEBUG_MSG
   Serial.print(" PinPulser::addPin: "); Serial.print(Pin,DEC);
 #endif
@@ -156,10 +154,10 @@ uint8_t PinPulser::addPin(uint8_t Pin)
   Serial.println();
 #endif
   return PIN_PULSER_SLOT_EMPTY;
-}
+ }
 
 PP_State PinPulser::process(void)
-{
+ {
   unsigned long now;
   switch(state)
   {
@@ -175,8 +173,6 @@ PP_State PinPulser::process(void)
 
       currentServo = int(pinQueue[0] / 2);
       direction = pinQueue[0] % 2;
-
-//      currentConfig = uint8_t(servoConfig[currentServo] && B01111111);
       currentConfig = servoConfig[currentServo];
 
 #ifdef DEBUG_MSG
@@ -267,7 +263,6 @@ PP_State PinPulser::process(void)
       Serial.print(F(" millis : "));Serial.print(millis());Serial.print(F(" targetMs : "));Serial.println(targetMs);
 #endif
 
-
     }
     break;
 
@@ -278,14 +273,10 @@ PP_State PinPulser::process(void)
 
 #if DEBUG == 3
         Serial.print(moveCount);
-        Serial.print(" : ");
-//        Serial.print(direction);
-//        Serial.print(currentStep);
         Serial.println(" : MOVING");
 #endif
 
         moveMs = millis() + currentPause;
-//        if (moveCount <= NUM_OF_STEPS)
         if (moveCount <= numberOfSteps)
          {
 #if DEBUG == 3
@@ -353,12 +344,11 @@ PP_State PinPulser::process(void)
       Serial.print(F(" PinPulser::process: PP_OUTPUT_ON_DELAY: Done Deactivate Pin: ")); Serial.println(pinQueue[0],DEC);
 #endif
 
-
-// set servo pwm to 0 confirm this is definitely set to 0
 #ifdef DEBUG_MSG
           Serial.print(F("currenctServo: ")); Serial.println(currentServo);
           Serial.println(F("Stopped servo"));
 #endif
+// set servo pwm to 0 confirm this is definitely set to 0
       pwm->setPWM(currentServo, 0, 4096);
 
 #ifdef USE_SHIFT_REGISTER
@@ -385,7 +375,7 @@ PP_State PinPulser::process(void)
 
 
   return state;
-}
+ }
 
 // set servos to start position
 
@@ -404,7 +394,7 @@ void PinPulser::setServoStart()
  
  }
 
-
+// print arrays to serial
 
 void PinPulser::printArrays()
  {
@@ -417,7 +407,6 @@ void PinPulser::printArrays()
     Serial.print(F(" servoPosition : "));Serial.println(servoPosition[i]);
    }
  }
-
 
 uint16_t PinPulser::getServoMin(uint8_t pin)
  {
@@ -454,6 +443,9 @@ void PinPulser::setUpdatePosition()
 #ifdef USE_SHIFT_REGISTER
 void PinPulser::outputLeds(uint16_t leds)
  {
+
+  SPI.begin();
+
 //  byte loByte, hiByte;
   byte hiByte = highByte(leds);
   byte loByte = lowByte(leds);
@@ -463,29 +455,34 @@ void PinPulser::outputLeds(uint16_t leds)
   Serial.print("ledOutput : ");
   Serial.println(leds, BIN);
   Serial.print("loByte : ");
-  Serial.print(loByte);
+  Serial.print(loByte, BIN);
   Serial.print(" hiByte : ");
-  Serial.println(hiByte);
+  Serial.println(hiByte, BIN);
 
 #endif
 
-
-
   digitalWrite(LATCH_PIN, LOW);
 
-#if DEBUG == 4
+#if DEBUG == 3
   Serial.print("latch : ");
   Serial.println(LATCH_PIN);
   Serial.print("data : ");
   Serial.println(DATA_PIN);
   Serial.print("clock : ");
   Serial.println(CLOCK_PIN);
-  delay(5000);
+  delay(1000);
 #endif
 
-  shiftOut(DATA_PIN, CLOCK_PIN, LSBFIRST, loByte);
-  shiftOut(DATA_PIN, CLOCK_PIN, LSBFIRST, hiByte);
+  SPI.transfer(loByte);
+  SPI.transfer(hiByte);
+
   digitalWrite(LATCH_PIN, HIGH);
+
+#if DEBUG == 4
+  Serial.println("Sent");
+#endif
+
+  SPI.end();
 
  }
 #endif

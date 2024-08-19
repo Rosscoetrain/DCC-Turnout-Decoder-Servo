@@ -19,16 +19,14 @@
  *  along with this code.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-
+#ifndef FUNCTIONS_H
+#define FUNCTIONS_H
 
 /*
  * a function to read an analogue pin and return a boolean value depending on reading.
  * works the same as doing a digital read on a digital pin
  * > 512 = TRUE, <= 512 = FALSE
  */
-#ifndef FUNCTIONS_H
-#define FUNCTIONS_H
-
 
 bool dr (int pin)
  {
@@ -36,13 +34,12 @@ bool dr (int pin)
   return ( val > 512 ) ;
  }
 
-
 /*
  * setup the version number
  */
 
-
-void setVersion() {
+void setVersion()
+ {
   const String versionString = VERSION;
   char versionArray[versionString.length() + 1];
   versionString.toCharArray(versionArray, versionString.length() + 1);
@@ -52,7 +49,7 @@ void setVersion() {
   versionBuffer[1] = atoi(version);  // Minor next
   version = strtok(NULL, ".");
   versionBuffer[2] = atoi(version);  // Patch last
-}
+ }
 
 
 /**
@@ -60,7 +57,8 @@ void setVersion() {
  */
 
 #ifndef ARDUINO_ARCH_ESP32
-void showAcknowledge(int nb) {
+void showAcknowledge(int nb)
+ {
   for (int i=0;i<nb;i++) {
     digitalWrite(LEDCONTROL, HIGH);   // turn the LED on (HIGH is the voltage level)
     delay(100);               // wait for a second
@@ -70,17 +68,16 @@ void showAcknowledge(int nb) {
 }
 #endif
 
+void(* resetFunc) (void) = 0;                     // declare reset function at address 0
+
+/*
+ * process the serial commands sent from the serial monitor
+*/
 
 #include "StringSplitter.h"
 
-
-void(* resetFunc) (void) = 0;                     // declare reset function at address 0
-
-
 void doSerialCommand(String readString)
  {
-//  byte p = 0;
-
   readString.trim();
 
   Serial.println(readString);                    // so you can see the captured string
@@ -92,7 +89,6 @@ void doSerialCommand(String readString)
 
     resetFunc();
    }
-
 
 #ifdef ENABLE_DCC_ACK
 
@@ -114,7 +110,6 @@ void doSerialCommand(String readString)
    }
 #endif
 
-
   if (readString == "<?>")
    {
     Serial.println(F("Help Text"));
@@ -130,10 +125,6 @@ void doSerialCommand(String readString)
     Serial.println(F("Set decoder output configuration: <P output [0:1:2:3]>"));
     
     Serial.println(F("Where output is 0 - 15 as on the decoder pcb"));
-
- 
-//    Serial.print(F("Change decoder address LSB: <W ")); Serial.print(CV_ACCESSORY_DECODER_ADDRESS_LSB); Serial.println(F(" address>"));
-//    Serial.print(F("Change decoder address MSB: <W ")); Serial.print(CV_ACCESSORY_DECODER_ADDRESS_MSB); Serial.println(F(" address>"));
 
     Serial.println(F("Show current CVs: <>"));
                      
@@ -154,13 +145,6 @@ void doSerialCommand(String readString)
       Serial.print(CV_ACCESSORY_DECODER_ADDRESS_MSB);
       Serial.print(F(" = "));
       Serial.println(Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_MSB));
-
-/*
-      Serial.print(F("CV"));
-      Serial.print(CV_ACCESSORY_DECODER_SERVO_MOVE_TIME);
-      Serial.print(F(" = "));
-      Serial.println(Dcc.getCV(CV_ACCESSORY_DECODER_SERVO_MOVE_TIME));
-*/
 
       for(uint8_t i = 0; i < NUM_TURNOUTS; i++)
        {
@@ -196,16 +180,14 @@ void doSerialCommand(String readString)
 
        }
 
-
      }
     else
      {
       if (readString.startsWith("<"))
        {
-//        int pos = 0;
-        // this is where commands are completed
+// this is where commands are completed
 
-        // command to close turnout <C address>
+// command to close turnout <C address>
 
         if (readString.startsWith("<C"))
          {
@@ -226,8 +208,7 @@ void doSerialCommand(String readString)
           splitter = NULL;
          }
 
-
-         // command to throw turnout <T address>
+// command to throw turnout <T address>
 
         if (readString.startsWith("<T"))
          {
@@ -247,10 +228,10 @@ void doSerialCommand(String readString)
           splitter = NULL;
          }
 
-         // command to set address <A address>
-         // address will be adjusted to the correct base turnout address
-         // eg if address is 2 this will be corrected to 1 as the address are groups of 8 with an offset of 4
-         // ie 1..8, 5..12, ...
+// command to set address <A address>
+// address will be adjusted to the correct base turnout address
+// eg if address is 2 this will be corrected to 1 as the address are groups of 8 with an offset of 4
+// ie 1..8, 5..12, ...
 
         if (readString.startsWith("<A"))
          {
@@ -406,7 +387,8 @@ void doSerialCommand(String readString)
  * 0 = default move servo at maximum speed
  * 1 = fast move 0.5 second
  * 2 = medium move 1.0 second
- * 4 = slow move 2.0 second
+ * 3 = slow move 2.0 second
+ * 4 = extra slow move 5.0 second
  * 
  */
 
@@ -444,92 +426,15 @@ void doSerialCommand(String readString)
           splitter = NULL;
          }
 
-
-
-
-
-    if (readString.startsWith("<X"))
-     {
-      Serial.println(F("Serial number is:"));
-
-      Serial.println(Dcc.getCV(CV_ACCESSORY_DECODER_SERIAL_LSB) + (Dcc.getCV(CV_ACCESSORY_DECODER_SERIAL_MSB) * 256 ));
-
-      Serial.println("");
-
-     }
-
-
-/*              
-        if (readString.startsWith("<W"))
+        if (readString.startsWith("<X"))
          {
-          StringSplitter *splitter = new StringSplitter(readString, ' ', 3);  // new StringSplitter(string_to_split, delimiter, limit)
-          int itemCount = splitter->getItemCount();
+          Serial.println(F("Serial number is:"));
 
-          if ( itemCount == 3)
-           {
-            byte addr = splitter->getItemAtIndex(1).toInt();
-            int value = splitter->getItemAtIndex(2).toInt();
+          Serial.println(Dcc.getCV(CV_ACCESSORY_DECODER_SERIAL_LSB) + (Dcc.getCV(CV_ACCESSORY_DECODER_SERIAL_MSB) * 256 ));
 
-            switch (addr) {
-              case CV_ACCESSORY_DECODER_ADDRESS_LSB:                  // CV1
+          Serial.println("");
 
-                    byte L = (value + 3) / 4;
-                    byte H = (value + 3) / 1024;
-
-#ifdef DEBUG_MSG
-                  Serial.print(F("Value = ")); Serial.println(value);
-                  Serial.print(F(" H = ")); Serial.println(H);
-                  Serial.print(F(" L = ")); Serial.println(L);
-#endif
-                  
-                  Dcc.setCV(CV_ACCESSORY_DECODER_ADDRESS_MSB, H);
-                  Dcc.setCV(CV_ACCESSORY_DECODER_ADDRESS_LSB, L);
-              break;
-              case CV_ACCESSORY_DECODER_ADDRESS_MSB:                  // CV9
-                  Dcc.setCV(CV_ACCESSORY_DECODER_ADDRESS_MSB, value);
-              break;
-
-              case 8:
-                if (value == 8)
-                 {
-                 }
-              break;
-              case CV_ACCESSORY_DECODER_OUTPUT_PULSE_TIME:
-                if ((value >= 0) && (value <= 255))
-                 {
-                  Dcc.setCV(CV_ACCESSORY_DECODER_OUTPUT_PULSE_TIME, value);
-                 }
-              break;
-              case CV_ACCESSORY_DECODER_CDU_RECHARGE_TIME:
-                if ((value >= 0) && (value <= 255))
-                 {
-                  Dcc.setCV(CV_ACCESSORY_DECODER_CDU_RECHARGE_TIME, value);
-                 }
-              break;
-              case CV_ACCESSORY_DECODER_ACTIVE_STATE:
-                if ((value == 0) || (value == 1))
-                 {
-                  Dcc.setCV(CV_ACCESSORY_DECODER_ACTIVE_STATE, value);
-                 }
-                else
-                 {
-                  Serial.println(F("Value must be 0 (LOW) or 1 (HIGH)"));
-                 }
-              break;
-              default:
-                 Serial.println(F("Invalid cv number: should be <W cv value> "));
-              break;
-             }
-           }
-          else
-           {
-            Serial.println(F("Invalid command: should be <W cv value>"));
-           }
-          delete splitter;
-          splitter = NULL;
          }
-*/
-
        }
       else
        {
@@ -541,13 +446,13 @@ void doSerialCommand(String readString)
 
 #endif
 
-
-
+/*
+ * initialize the decoder
+*/
 
 void initPinPulser(void)
-{
+ {
   BaseTurnoutAddress = (((Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_MSB) * 256) + Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_LSB) - 1) * 4) + 1  ;
-
 
 // read the CV's for each address
   for(uint8_t i = 0; i < NUM_TURNOUTS; i++)
@@ -568,16 +473,7 @@ void initPinPulser(void)
 
   Serial.print(F(" DCC Turnout Base Address: ")); Serial.println(BaseTurnoutAddress, DEC);
 
-  // Step through all the Turnout LED pins setting them to OUTPUT and NOT Active State
-//  for(uint8_t i = 0; i < NUM_TURNOUTS; i++)
-//  {
-//    digitalWrite(outputs[i], !activeOutputState[i / 2]); // Set the Output Inactive before the direction so the 
-//    digitalWrite(outputs[i], 0);                  // Set the Output Inactive before the direction so the 
-//  	pinMode( outputs[i], OUTPUT );                // Pin doesn't momentarily pulse the wrong state
-//	}
-
-  // Init the PinPulser with the new settings 
-//  pinPulser.init(servoMin, servoMax, servoTime, outputs, pwm);
+// Init the PinPulser with the new settings 
 #ifdef USE_SHIFT_REGISTER
   pinPulser.init(servoMin, servoMax, servoTime, servoConfig, servoPosition, &pwm);
 #else
@@ -585,18 +481,16 @@ void initPinPulser(void)
 #endif
 
   pinPulser.printArrays();
-
-}
- 
-
+ }
 
 /*
  *  DCC functions
 */
 
 // This function is called whenever a normal DCC Turnout Packet is received
+
 void notifyDccAccTurnoutOutput( uint16_t Addr, uint8_t Direction, uint8_t OutputPower )
-{
+ {
 #ifdef  NOTIFY_TURNOUT_MSG
   Serial.print("notifyDccAccTurnoutOutput: Turnout: ") ;
   Serial.print(Addr,DEC) ;
@@ -644,10 +538,6 @@ void notifyDccAccTurnoutOutput( uint16_t Addr, uint8_t Direction, uint8_t Output
 
       pinPulser.addPin(pinIndex);
       
-/*  TODO */
-// write new position to CV
-//      Dcc.setCV();
-
 #ifdef  NOTIFY_TURNOUT_MSG
       Serial.print(" Pin Index: ");
       Serial.print(pinIndex,DEC);
@@ -660,11 +550,11 @@ void notifyDccAccTurnoutOutput( uint16_t Addr, uint8_t Direction, uint8_t Output
 #ifdef  NOTIFY_TURNOUT_MSG
   Serial.println();
 #endif
-}
+ }
 
 
 void notifyCVChange(uint16_t CV, uint8_t Value)
-{
+ {
 #ifdef DEBUG_MSG
   Serial.print("notifyCVChange: CV: ") ;
   Serial.print(CV,DEC) ;
@@ -683,7 +573,7 @@ void notifyCVChange(uint16_t CV, uint8_t Value)
    {
 		initPinPulser();	                                 // Some CV we care about changed so re-init the PinPulser with the new CV settings
    }
-}
+ }
 
 
 void notifyCVResetFactoryDefault()
@@ -692,16 +582,18 @@ void notifyCVResetFactoryDefault()
   // to flag to the loop() function that a reset to Factory Defaults needs to be done
   FactoryDefaultCVIndex = sizeof(FactoryDefaultCVs)/sizeof(CVPair);
 
-
+#ifdef ENABLE_SERIAL
   Serial.println("Resetting Factory Default");
+#endif
 
 };
 
 // This function is called by the NmraDcc library when a DCC ACK needs to be sent
 // Calling this function should cause an increased 60ma current drain on the power supply for 6ms to ACK a CV Read 
+
 #ifdef  ENABLE_DCC_ACK
 void notifyCVAck(void)
-{
+ {
 #ifdef DEBUG_MSG
   Serial.println("notifyCVAck") ;
 #endif
@@ -712,12 +604,12 @@ void notifyCVAck(void)
   digitalWrite( ENABLE_DCC_ACK, HIGH );
   delay( 10 );  // The DCC Spec says 6ms but 10 makes sure... ;)
   digitalWrite( ENABLE_DCC_ACK, LOW );
-}
+ }
 #endif
 
 #ifdef  NOTIFY_DCC_MSG
 void notifyDccMsg( DCC_MSG * Msg)
-{
+ {
   Serial.print("notifyDccMsg: ") ;
   for(uint8_t i = 0; i < Msg->Size; i++)
   {
@@ -725,8 +617,6 @@ void notifyDccMsg( DCC_MSG * Msg)
     Serial.write(' ');
   }
   Serial.println();
-}
+ }
 #endif
 
-
-  
