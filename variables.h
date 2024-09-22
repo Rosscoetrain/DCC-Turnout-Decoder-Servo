@@ -192,36 +192,11 @@ uint8_t FactoryDefaultCVIndex = 0;
 // This is the Arduino Pin Mapping to Turnout LEDs with 1 pin per turnout 
 // A1 is missing in the sequence as it is used for the DCC ACK
 
-// Pin is HIGH for thrown LOW for closed
 
-/*
-#ifdef NANO_SMT_BOARD
-
-byte outputs[] = { 4, 3, 6, 5, 8, 7, 10, 9, 11, 12, 14, 13, 17, 16, 19, 18};
-//   pins         D4 D3 D6 D5 D8 D7 D10 D9 D11 D12  A0 D13  A3  A2  A5  A4
-
-#elif ARDUINO_ARCH_ESP32
-
-// this is the ESP32-WROOM-32 Pin Mapping to Turnout Addresses
-
-byte outputs[] = { 33, 32, 26, 25, 14, 27, 13, 12, 15,  4, 17, 16, 18,  5, 21, 19};
-
-#elif ATMEGA328P_SMT_BOARD
-
-#warning "Building for ATMEGA328P SMT Board"
-// this is the ATMega328p TQFP-32 Pin Mapping to Turnout Addresses
-
-byte outputs[] = {  6,  5,  8,  7, 10,  9, 12, 11, 13, 14, 17, 16, 19, 18,  4,  3};
-//   pins          D6  D5  D8  D7 D10  D9 D12 D11 D13  A0  A3  A2  A5  A4  D4  D3
-
-#else
-*/
-
-//byte outputs[] = { 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 17, 16, 19, 18};
+#ifndef USE_SHIFT_REGISTER
 byte outputs[] = { 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 1, 0, 13, 14, 16, 17};
 //   pins         D12 D11 D10 D9 D8 D7 D6 D5 D4 D3 D1 D0 D13  A0  A2  A3
-
-//#endif
+#endif
 
 NmraDcc  Dcc ;
 DCC_MSG  Packet ;

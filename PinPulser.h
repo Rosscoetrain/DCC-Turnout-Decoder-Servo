@@ -70,6 +70,9 @@ class PinPulser
 #ifdef USE_SHIFT_REGISTER
     uint16_t ledOutput;
     void outputLeds(uint16_t);
+    void regWrite(int pin, bool state);
+    int numOfRegisters = 2;
+    byte* registerState;
 #else
     byte *outputs;
 #endif

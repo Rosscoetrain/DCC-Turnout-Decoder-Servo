@@ -24,7 +24,7 @@
 
 // this is the serial number for the board look on the back of the decoder board
 //
-#define SERIAL_NUMBER 999
+#define SERIAL_NUMBER 1
 
 // Un-Comment the line below to force CVs to be written to the Factory Default values
 // defined in the FactoryDefaultCVs below on Start-Up
@@ -123,6 +123,8 @@
  * shift register defines
 */
 
-#define LATCH_PIN 10
+#define LATCH_PIN 5
+#define DATA_PIN 6
+#define CLOCK_PIN 4
 
 #endif   // defines.h

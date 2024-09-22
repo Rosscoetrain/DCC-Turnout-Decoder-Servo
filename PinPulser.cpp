@@ -20,7 +20,7 @@
 #include "PinPulser.h"
 
 #ifdef USE_SHIFT_REGISTER
-#include "SPI.h"
+//#include "SPI.h"
 #endif
 
 // define empty pin slot value
@@ -45,6 +45,14 @@ void PinPulser::init(uint16_t servoMin_[], uint16_t servoMax_[], uint8_t servoTi
 
 #ifdef USE_SHIFT_REGISTER
   this->ledOutput = 0;
+
+  //Initialize array
+  this->registerState = new byte[this->numOfRegisters];
+  for (size_t i = 0; i < this->numOfRegisters; i++) {
+    this->registerState[i] = 0;
+  }
+
+
 #else
   this->outputs = outputs_;
 #endif
@@ -444,11 +452,13 @@ void PinPulser::setUpdatePosition()
 void PinPulser::outputLeds(uint16_t leds)
  {
 
-  SPI.begin();
+//  SPI.begin();
 
 //  byte loByte, hiByte;
-  byte hiByte = highByte(leds);
-  byte loByte = lowByte(leds);
+//  byte hiByte = highByte(leds);
+//  byte loByte = lowByte(leds);
+
+  Serial.println("outputLeds");
 
 #if DEBUG == 4
 
@@ -461,7 +471,7 @@ void PinPulser::outputLeds(uint16_t leds)
 
 #endif
 
-  digitalWrite(LATCH_PIN, LOW);
+//  digitalWrite(LATCH_PIN, LOW);
 
 #if DEBUG == 3
   Serial.print("latch : ");
@@ -473,17 +483,65 @@ void PinPulser::outputLeds(uint16_t leds)
   delay(1000);
 #endif
 
-  SPI.transfer(loByte);
-  SPI.transfer(hiByte);
+//  SPI.transfer(loByte);
+//  SPI.transfer(hiByte);
 
-  digitalWrite(LATCH_PIN, HIGH);
+  for (int i = 0; i < 16; i++)
+    {
+      regWrite(i, (leds >> i) & 0x01);
+
+//      Serial.print("i : ");
+//      Serial.print(i);
+//      Serial.print(" leds : ");
+//      Serial.print(leds, BIN);
+//      Serial.print(" output : ");
+//      Serial.println((leds >> i) & 0x01, BIN);
+
+    }
+
+//  digitalWrite(LATCH_PIN, HIGH);
 
 #if DEBUG == 4
   Serial.println("Sent");
 #endif
 
-  SPI.end();
+//  SPI.end();
 
  }
 #endif
+
+
+
+void PinPulser::regWrite(int pin, bool state){
+  //Determines register
+  int reg = pin / 8;
+  //Determines pin for actual register
+  int actualPin = pin - (8 * reg);
+
+  //Begin session
+  digitalWrite(LATCH_PIN, LOW);
+
+//  for (int i = 0; i < numOfRegisters; i++){
+  for (int i = numOfRegisters - 1; i >= 0; i--){
+    //Get actual states for register
+    byte* states = &registerState[i];
+
+    //Update state
+    if (i == reg){
+      bitWrite(*states, actualPin, state);
+    }
+
+    //Write
+    shiftOut(DATA_PIN, CLOCK_PIN, MSBFIRST, *states);
+
+    Serial.print("i : ");
+    Serial.print(i);
+    Serial.print(" state : ");
+    Serial.println(*states, BIN);
+
+  }
+
+  //End session
+  digitalWrite(LATCH_PIN, HIGH);
+}
 

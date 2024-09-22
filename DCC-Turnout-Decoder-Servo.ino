@@ -106,6 +106,9 @@ void setup()
 
 #ifdef USE_SHIFT_REGISTER
   pinMode(LATCH_PIN, OUTPUT);
+  pinMode(DATA_PIN, OUTPUT);
+  pinMode(CLOCK_PIN, OUTPUT);
+  
 #else
 
 // set digital and analog pins defined in outputs to OUTPUT
