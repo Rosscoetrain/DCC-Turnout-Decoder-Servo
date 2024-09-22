@@ -19,10 +19,6 @@
 
 #include "PinPulser.h"
 
-#ifdef USE_SHIFT_REGISTER
-//#include "SPI.h"
-#endif
-
 // define empty pin slot value
 
 #define PIN_PULSER_SLOT_EMPTY 255
@@ -451,17 +447,9 @@ void PinPulser::setUpdatePosition()
 #ifdef USE_SHIFT_REGISTER
 void PinPulser::outputLeds(uint16_t leds)
  {
-
-//  SPI.begin();
-
-//  byte loByte, hiByte;
-//  byte hiByte = highByte(leds);
-//  byte loByte = lowByte(leds);
-
-  Serial.println("outputLeds");
-
 #if DEBUG == 4
 
+  Serial.println("outputLeds");
   Serial.print("ledOutput : ");
   Serial.println(leds, BIN);
   Serial.print("loByte : ");
@@ -483,9 +471,6 @@ void PinPulser::outputLeds(uint16_t leds)
   delay(1000);
 #endif
 
-//  SPI.transfer(loByte);
-//  SPI.transfer(hiByte);
-
   for (int i = 0; i < 16; i++)
     {
       regWrite(i, (leds >> i) & 0x01);
@@ -504,8 +489,6 @@ void PinPulser::outputLeds(uint16_t leds)
 #if DEBUG == 4
   Serial.println("Sent");
 #endif
-
-//  SPI.end();
 
  }
 #endif

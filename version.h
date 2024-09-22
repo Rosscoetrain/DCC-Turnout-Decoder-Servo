@@ -18,8 +18,10 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#define VERSION "0.0.4"
+#define VERSION "0.0.5"
 
+// 0.0.5  - use bit write instead of SPI to control 74HC595 shift registers
+//        - remove all reverences to SPI
 // 0.0.4  - use SPI to control 74HC595 shift registers
 // 0.0.3  - make servo motion smooth
 // 0.0.2  - update to using 74HC595 shift registers for led control
