@@ -44,7 +44,7 @@ void PinPulser::init(uint16_t servoMin_[], uint16_t servoMax_[], uint8_t servoTi
 
   //Initialize array
   this->registerState = new byte[this->numOfRegisters];
-  for (size_t i = 0; i < this->numOfRegisters; i++) {
+  for (int i = 0; i < this->numOfRegisters; i++) {
     this->registerState[i] = 0;
   }
 
@@ -404,7 +404,7 @@ void PinPulser::printArrays()
  {
   for(uint8_t i = 0; i < NUM_TURNOUTS; i++)
    {
-    Serial.print(F(" output : "));Serial.print(i+1);Serial.print(F(" servoMin : "));Serial.print(servoMin[i]);
+    Serial.print(F(" output : "));Serial.print(i);Serial.print(F(" servoMin : "));Serial.print(servoMin[i]);
     Serial.print(F(" servoMax : "));Serial.print(servoMax[i]);
     Serial.print(F(" servoTime : "));Serial.print(servoTime[i]);
     Serial.print(F(" servoConfig : "));Serial.print(servoConfig[i]);
@@ -517,10 +517,10 @@ void PinPulser::regWrite(int pin, bool state){
     //Write
     shiftOut(DATA_PIN, CLOCK_PIN, MSBFIRST, *states);
 
-    Serial.print("i : ");
-    Serial.print(i);
-    Serial.print(" state : ");
-    Serial.println(*states, BIN);
+//    Serial.print("i : ");
+//    Serial.print(i);
+//    Serial.print(" state : ");
+//    Serial.println(*states, BIN);
 
   }
 
