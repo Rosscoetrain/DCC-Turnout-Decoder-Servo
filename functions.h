@@ -263,6 +263,19 @@ void doSerialCommand(String readString)
          }
 
 /*
+ * command to reset all CVs to factory default
+ *
+ * 
+ */
+
+      if (readString == "<D>")
+       {
+        Serial.println(F("Reset factory default CVs"));
+        notifyCVResetFactoryDefault();
+       }
+
+
+/*
  * command to set output closed value.
  * The value here is the number of milliseconds / 10
  * ie 100ms/10 = 10.

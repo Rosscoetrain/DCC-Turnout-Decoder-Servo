@@ -18,8 +18,10 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#define VERSION "0.0.5"
+#define VERSION "1.0.0"
 
+// 1.0.0  - first production release
+// 0.0.6  - add <D> reset to factory defaults serial command
 // 0.0.5  - use bit write instead of SPI to control 74HC595 shift registers
 //        - remove all reverences to SPI
 // 0.0.4  - use SPI to control 74HC595 shift registers
