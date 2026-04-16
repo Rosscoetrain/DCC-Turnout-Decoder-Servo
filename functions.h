@@ -70,6 +70,48 @@ void showAcknowledge(int nb)
 
 void(* resetFunc) (void) = 0;                     // declare reset function at address 0
 
+
+/*
+ * show the user CVs only
+ */
+
+void showUserCVs()
+ {
+  for(uint8_t i = 0; i < NUM_TURNOUTS; i++)
+   {
+    Serial.print(F("CV"));
+    Serial.print(CV_USER_BASE_ADDRESS + (i * CV_PER_OUTPUT));
+    Serial.print(F(" = "));
+    Serial.print(Dcc.getCV(CV_USER_BASE_ADDRESS + (i * CV_PER_OUTPUT)));
+    Serial.print("    ");
+
+    Serial.print(F("CV"));
+    Serial.print(CV_USER_BASE_ADDRESS + 1 + (i * CV_PER_OUTPUT));
+    Serial.print(F(" = "));
+    Serial.print(Dcc.getCV(CV_USER_BASE_ADDRESS + 1 + (i * CV_PER_OUTPUT)));
+    Serial.print("    ");
+
+    Serial.print(F("CV"));
+    Serial.print(CV_USER_BASE_ADDRESS + 2 + (i * CV_PER_OUTPUT));
+    Serial.print(F(" = "));
+    Serial.print(Dcc.getCV(CV_USER_BASE_ADDRESS + 2 + (i * CV_PER_OUTPUT)));
+    Serial.print("    ");
+
+    Serial.print(F("CV"));
+    Serial.print(CV_USER_BASE_ADDRESS + 3 + (i * CV_PER_OUTPUT));
+    Serial.print(F(" = "));
+    Serial.print(Dcc.getCV(CV_USER_BASE_ADDRESS + 3 + (i * CV_PER_OUTPUT)));
+    Serial.print("    ");
+
+    Serial.print(F("CV"));
+    Serial.print(CV_USER_BASE_ADDRESS + 4 + (i * CV_PER_OUTPUT));
+    Serial.print(F(" = "));
+    Serial.print(Dcc.getCV(CV_USER_BASE_ADDRESS + 4 + (i * CV_PER_OUTPUT)));
+    Serial.println("    ");
+   }
+ }
+
+
 /*
  * process the serial commands sent from the serial monitor
 */
@@ -146,6 +188,8 @@ void doSerialCommand(String readString)
       Serial.print(F(" = "));
       Serial.println(Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_MSB));
 
+      showUserCVs();
+/*
       for(uint8_t i = 0; i < NUM_TURNOUTS; i++)
        {
         Serial.print(F("CV"));
@@ -179,6 +223,7 @@ void doSerialCommand(String readString)
         Serial.println("    ");
 
        }
+*/
 
      }
     else
@@ -186,6 +231,12 @@ void doSerialCommand(String readString)
       if (readString.startsWith("<"))
        {
 // this is where commands are completed
+
+// show only the user CVs  also to be used for RT_Uploader_Configure
+        if (readString.startsWith("<U>"))
+         {
+          showUserCVs();
+         }
 
 // command to close turnout <C address>
 
