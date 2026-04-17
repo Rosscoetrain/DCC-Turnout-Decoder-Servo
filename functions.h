@@ -629,11 +629,11 @@ void notifyCVChange(uint16_t CV, uint8_t Value)
   Value = Value;  // Silence Compiler Warnings...
 
   if( (CV == CV_ACCESSORY_DECODER_ADDRESS_MSB) || (CV == CV_ACCESSORY_DECODER_ADDRESS_LSB) ||
-		  (CV == CV_ACCESSORY_DECODER_SERVO_MOVE_TIME) ||
-      ( ( CV - 33 ) % 5 == 0 ) ||
-      ( ( CV - 34 ) % 5 == 0 ) ||
-      ( ( CV - 35 ) % 5 == 0 ) ||
-      ( ( CV - 36 ) % 5 == 0 ) )
+		  (CV == CV_ACCESSORY_DECODER_SERVO_MOVE_TIME)  )// ||
+//      ( ( CV - 33 ) % 5 == 0 ) ||
+//      ( ( CV - 34 ) % 5 == 0 ) ||
+//      ( ( CV - 35 ) % 5 == 0 ) ||
+//      ( ( CV - 36 ) % 5 == 0 ) )
    {
 		initPinPulser();	                                 // Some CV we care about changed so re-init the PinPulser with the new CV settings
    }

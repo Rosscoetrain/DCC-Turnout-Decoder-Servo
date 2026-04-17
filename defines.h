@@ -24,7 +24,7 @@
 
 // this is the serial number for the board look on the back of the decoder board
 //
-#define SERIAL_NUMBER 7
+#define SERIAL_NUMBER 44
 
 // Un-Comment the line below to force CVs to be written to the Factory Default values
 // defined in the FactoryDefaultCVs below on Start-Up
